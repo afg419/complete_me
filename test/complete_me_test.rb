@@ -45,13 +45,13 @@ class CompleteMeTest < Minitest::Test
     assert_equal "ba", complete.links["b"].links["a"].root
   end
 
-  def test_when_it_adds_a_two_letter_word_it_adds_the_first_letter_as_word
+  def test_when_it_adds_a_two_letter_word_it_adds_the_first_letter_fragment
     complete.insert("ba")
 
     assert_equal "b", complete.links["b"].root
   end
 
-  def test_it_recognizes_two_letter_word_as_word_but_not_first_letter
+  def test_it_recognizes_two_letter_word_as_word_but_not_first_letter_fragment
     complete.insert("ba")
 
     refute complete.links["b"].word
@@ -231,7 +231,7 @@ class CompleteMeTest < Minitest::Test
   def test_it_can_select_to_set_fragment_to_word_association
     complete.select("hel","hello")
 
-    assert_equal 1, complete.associator[["hel","hello"]]
+    assert_equal -1, complete.associator[["hel","hello"]]
   end
 
   def test_it_can_select_to_increment_fragment_to_word_association
@@ -239,7 +239,7 @@ class CompleteMeTest < Minitest::Test
       complete.select("hel","hello")
     end
 
-    assert_equal 10, complete.associator[["hel","hello"]]
+    assert_equal -10, complete.associator[["hel","hello"]]
   end
 
   def test_it_can_select_multiple_to_set_fragment_to_word_associations
@@ -247,8 +247,8 @@ class CompleteMeTest < Minitest::Test
     complete.select("al","almost")
     complete.select("hel","hello")
 
-    assert_equal 2, complete.associator[["hel","hello"]]
-    assert_equal 1, complete.associator[["al","almost"]]
+    assert_equal -2, complete.associator[["hel","hello"]]
+    assert_equal -1, complete.associator[["al","almost"]]
   end
 
   def test_it_can_sort_words_by_their_fragment_to_word_association
@@ -260,7 +260,7 @@ class CompleteMeTest < Minitest::Test
 
     sorted = complete.sort_by_weights("he",word_array)
 
-    assert_equal ["hello", "helter", "hell", "hegemony"], sorted
+    assert_equal ["hello", "hell", "helter", "hegemony"], sorted
 
   end
 
@@ -283,8 +283,8 @@ class CompleteMeTest < Minitest::Test
     computed_le = complete.suggest("le")
 
     expected_ha = %w{hallow hallowed hall}
-    expected_leave = %w{leaves leave leavened leaven}
-    expected_le = %w{leaven leave leaves leavened}
+    expected_leave = %w{leave leaves leaven leavened}
+    expected_le = %w{leaven leave leavened leaves}
 
     assert_equal expected_ha, computed_ha
     assert_equal expected_leave, computed_leave

@@ -16,17 +16,19 @@ class CompleteMe
 
     if !root && depth == string.length
       self.root = string
-      self.word = true
-    elsif root == string
+    end
+
+    if root == string
       self.word = true
     else
+
       if !root
         self.root = string[0..depth-1]
       end
       links[string[depth]] ||= CompleteMe.new
       links[string[depth]].insert(string,depth + 1)
-    end
 
+    end
 
   end
 
@@ -70,14 +72,14 @@ class CompleteMe
 
   def select(fragment,word)
     self.associator[[fragment,word]] ||= 0
-    self.associator[[fragment,word]] += 1
+    self.associator[[fragment,word]] -= 1
   end
 
   def sort_by_weights(fragment,word_array)
     weighted = word_array.map do |word|
       [associator[[fragment,word]].to_i,word]
     end
-    weighted = weighted.sort.reverse
+    weighted = weighted.sort
     words = weighted.map do |value,word|
       word
     end
