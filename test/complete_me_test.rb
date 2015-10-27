@@ -24,7 +24,7 @@ class CompleteMeTest < Minitest::Test
   end
 
   def test_it_begins_with_alphabet_links
-    assert_equal({"a" => nil, "b" => nil} , complete.links)
+    assert_equal({} , complete.links)
   end
 
   def test_it_can_add_a_letter_word
@@ -102,5 +102,57 @@ class CompleteMeTest < Minitest::Test
 
     assert complete.zoom_to("hello").word
   end
+
+  def test_it_populates_all_word_fragments_with_longer_words
+    complete.add_word("hello")
+
+    assert_equal "hell", complete.zoom_to("hell").root
+    assert_equal "hel", complete.zoom_to("hel").root
+    assert_equal "he", complete.zoom_to("he").root
+    assert_equal "h", complete.zoom_to("h").root
+  end
+
+  def test_word_fragments_of_longer_words_not_words
+    complete.add_word("hello")
+
+    refute complete.zoom_to("hell").word
+    refute complete.zoom_to("hel").word
+    refute complete.zoom_to("he").word
+    refute complete.zoom_to("h").word
+  end
+
+  def test_word_fragments_of_longer_words_not_words_even_if_they_are
+    complete.add_word("leaven")
+
+    assert complete.zoom_to("leaven").word
+    refute complete.zoom_to("leave").word
+  end
+
+  def test_word_fragments_of_longer_words_not_words_until_they_are_added
+    complete.add_word("leaven")
+    refute complete.zoom_to("leave").word
+    complete.add_word("leave")
+    assert complete.zoom_to("leave").word
+  end
+
+  def test_it_adds_bunches_of_words
+    words = %w{hello lobo aleph leaf leave leaven}
+    words.each do |word|
+      complete.add_word(word)
+    end
+
+    assert_equal "hello", complete.zoom_to("hello").root
+    assert_equal "leave", complete.zoom_to("leave").root
+    assert_equal "lobo", complete.zoom_to("lobo").root
+    assert_equal "aleph", complete.zoom_to("aleph").root
+    assert_equal "leaf", complete.zoom_to("leaf").root
+    assert_equal "leaven" , complete.zoom_to("leaven").root
+    assert_equal "ale", complete.zoom_to("ale").root
+    assert_equal "le", complete.zoom_to("le").root
+    assert_equal "l", complete.zoom_to("l").root
+
+  end
+
+
 
 end

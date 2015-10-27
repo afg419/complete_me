@@ -12,13 +12,15 @@ class CompleteMe
 
   def initialize(data = nil)
     @root = data
-    @links = {"a" => nil, "b" => nil}
+    @links = {}
   end
 
   def add_word(string, depth = 0)
 
     if !root && depth == (string.length)
       self.root = string
+      self.word = true
+    elsif root == string
       self.word = true
     else
       if !root
@@ -28,12 +30,9 @@ class CompleteMe
       links[string[depth]].add_word(string,depth + 1)
     end
 
+
   end
-  #
-  # def link_forward(char)
-  #   lambda {|char| links[char]}
-  # end
-  #
+
   def zoom_to(string)
     current = self
     chars = string.chars
