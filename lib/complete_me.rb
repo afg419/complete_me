@@ -1,18 +1,15 @@
 require 'pry'
 
 
-class NullWord
-
-end
-
 
 class CompleteMe
 
-  attr_accessor :root, :links, :word
+  attr_accessor :root, :links, :word, :associator
 
   def initialize(data = nil)
     @root = data
     @links = {}
+    @associator ={}
   end
 
   def insert(string, depth = 0)
@@ -65,10 +62,28 @@ class CompleteMe
     find_all_words.length
   end
 
-  def suggest(string)
-    current = zoom_to(string)
-    current.find_all_words
+  def suggest(fragment)
+    current = zoom_to(fragment)
+    possible_words = current.find_all_words
+    sort_by_weights(fragment,possible_words)
   end
+
+  def select(fragment,word)
+    self.associator[[fragment,word]] ||= 0
+    self.associator[[fragment,word]] += 1
+  end
+
+  def sort_by_weights(fragment,word_array)
+    weighted = word_array.map do |word|
+      [associator[[fragment,word]],word]
+    end
+
+    weighted = weighted.sort
+    words = weighted.map do |value,word|
+      word
+    end
+  end
+
 
 end
 

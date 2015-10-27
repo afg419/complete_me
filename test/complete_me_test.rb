@@ -177,6 +177,55 @@ class CompleteMeTest < Minitest::Test
 
   end
 
+  def test_it_can_find_all_words_no_fragment_words
+    words = %w{hello, hire, goodbye, style}
+    words.each do |word|
+      complete.insert(word)
+    end
 
+    assert_equal words, complete.find_all_words
+
+  end
+
+  def test_it_can_find_all_words_with_fragment_words
+    words = %w{leaven leave leaves hallowed hallow hall allow}
+    words.each do |word|
+      complete.insert(word)
+    end
+
+    assert_equal words.sort, complete.find_all_words.sort
+
+  end
+
+  def test_it_can_count_words
+    words = %w{leaven leave leaves hallowed hallow hall allow}
+    words.each do |word|
+      complete.insert(word)
+    end
+
+    assert_equal 7, complete.count
+  end
+
+  def test_it_can_suggest_words_from_non_word_fragment
+    words = %w{leaven leave leaves hallowed hallow hall allow}
+    words.each do |word|
+      complete.insert(word)
+    end
+    expected = %w{leaven leave leaves}.sort
+    computed = complete.suggest("lea")
+
+    assert_equal expected, computed
+  end
+
+  def test_it_can_suggest_words_from_word_fragment
+    words = %w{leaven leave leaves hallowed hallow hall allow}
+    words.each do |word|
+      complete.insert(word)
+    end
+    expected = %w{leaven leave leaves}.sort
+    computed = complete.suggest("leave")
+
+    assert_equal expected, computed
+  end
 
 end
