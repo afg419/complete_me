@@ -60,21 +60,15 @@ class CompleteMe
     end
     words
   end
-  #
-  # def suggest(string,output = [])
-  #   current = zoom_to(string)
-  #   binding.pry
-  #   if current.word
-  #     output << current.root
-  #   end
-  #   binding.pry
-  #   current.links.keys.each do |char_key|
-  #     binding.pry
-  #     suggest(string+"char_key",output)
-  #     binding.pry
-  #   end
-  #   output
-  # end
+
+  def count
+    find_all_words.length
+  end
+
+  def suggest(string)
+    current = zoom_to(string)
+    current.find_all_words
+  end
 
 end
 
@@ -84,3 +78,4 @@ completer.insert("heat")
 completer.insert("he")
 p "suggest method: #{completer.find_all_words}"
 p completer.find_all_words[1]
+p completer.suggest("hel")
