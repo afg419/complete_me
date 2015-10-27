@@ -44,8 +44,21 @@ class CompleteMe
     current
   end
 
-  def find_all_words
-    
+  def find_all_words(words = [])
+
+    if links.length == 0
+      words << root
+    else
+      if word
+        words << root
+      end
+
+      links.keys.each do |char_key|
+        links[char_key].find_all_words(words)
+      end
+
+    end
+    words
   end
   #
   # def suggest(string,output = [])
@@ -68,4 +81,6 @@ end
 completer = CompleteMe.new("")
 completer.insert("hell")
 completer.insert("heat")
-p "suggest method: #{completer.suggest("h")}"
+completer.insert("he")
+p "suggest method: #{completer.find_all_words}"
+p completer.find_all_words[1]
