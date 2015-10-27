@@ -20,28 +20,34 @@ class CompleteMe
     if !root && depth == (string.length)
       self.root = string
       self.word = true
-    elsif !root
-      self.root = string[0..depth-1]
-      links[string[depth]] ||= CompleteMe.new
-      links[string[depth]].add_word(string,depth +1)
-    elsif
+    else
+      if !root
+        self.root = string[0..depth-1]
+      end
       links[string[depth]] ||= CompleteMe.new
       links[string[depth]].add_word(string,depth + 1)
     end
 
   end
-  # 
+  #
   # def link_forward(char)
   #   lambda {|char| links[char]}
   # end
   #
-  # def zoom_to_string(string)
-  #   chars = string.chars
-  #   chars.each do |char|
-  #     link_forward(char)
-  #   end
-  # end
+  def zoom_to(string)
+    current = self
+    chars = string.chars
+
+    chars.each do |char|
+      current = current.links[char]
+    end
+
+    current
+  end
 
 end
 
-completer = CompleteMe.new
+completer = CompleteMe.new("")
+completer.add_word("hello")
+p completer.zoom_to("hel").root
+p completer.zoom_to("hel").links
