@@ -212,7 +212,7 @@ class CompleteMeTest < Minitest::Test
       complete.insert(word)
     end
     expected = %w{leaven leave leaves}.sort
-    computed = complete.suggest("lea")
+    computed = complete.suggest("lea").sort
 
     assert_equal expected, computed
   end
@@ -223,9 +223,72 @@ class CompleteMeTest < Minitest::Test
       complete.insert(word)
     end
     expected = %w{leaven leave leaves}.sort
-    computed = complete.suggest("leave")
+    computed = complete.suggest("leave").sort
 
     assert_equal expected, computed
+  end
+
+  def test_it_can_select_to_set_fragment_to_word_association
+    complete.select("hel","hello")
+
+    assert_equal 1, complete.associator[["hel","hello"]]
+  end
+
+  def test_it_can_select_to_increment_fragment_to_word_association
+    10.times do |x|
+      complete.select("hel","hello")
+    end
+
+    assert_equal 10, complete.associator[["hel","hello"]]
+  end
+
+  def test_it_can_select_multiple_to_set_fragment_to_word_associations
+    complete.select("hel","hello")
+    complete.select("al","almost")
+    complete.select("hel","hello")
+
+    assert_equal 2, complete.associator[["hel","hello"]]
+    assert_equal 1, complete.associator[["al","almost"]]
+  end
+
+  def test_it_can_sort_words_by_their_fragment_to_word_association
+    word_array = %w{ hegemony hello hell helter}.shuffle
+    complete.select("he","hello")
+    complete.select("he","hello")
+    complete.select("he","hell")
+    complete.select("he","helter")
+
+    sorted = complete.sort_by_weights("he",word_array)
+
+    assert_equal ["hello", "helter", "hell", "hegemony"], sorted
+
+  end
+
+  def test_it_suggests_according_to_weight
+    words = %w{leaven leave leaves leavened hallowed hallow hall allow}
+    words.each do |word|
+      complete.insert(word)
+    end
+    complete.select("ha","hallowed")
+    complete.select("ha","hallow")
+    complete.select("ha","hallow")
+    complete.select("leave","leaves")
+    complete.select("leave","leave")
+    complete.select("le","leaven")
+    complete.select("le","leaven")
+    complete.select("le","leave")
+
+    computed_ha = complete.suggest("ha")
+    computed_leave = complete.suggest("leave")
+    computed_le = complete.suggest("le")
+
+    expected_ha = %w{hallow hallowed hall}
+    expected_leave = %w{leaves leave leavened leaven}
+    expected_le = %w{leaven leave leaves leavened}
+
+    assert_equal expected_ha, computed_ha
+    assert_equal expected_leave, computed_leave
+    assert_equal expected_le, computed_le
   end
 
 end

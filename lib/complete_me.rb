@@ -14,7 +14,7 @@ class CompleteMe
 
   def insert(string, depth = 0)
 
-    if !root && depth == (string.length)
+    if !root && depth == string.length
       self.root = string
       self.word = true
     elsif root == string
@@ -75,22 +75,22 @@ class CompleteMe
 
   def sort_by_weights(fragment,word_array)
     weighted = word_array.map do |word|
-      [associator[[fragment,word]],word]
+      [associator[[fragment,word]].to_i,word]
     end
-
-    weighted = weighted.sort
+    weighted = weighted.sort.reverse
     words = weighted.map do |value,word|
       word
     end
+    words
   end
 
 
 end
 
-completer = CompleteMe.new("")
-completer.insert("hell")
-completer.insert("heat")
-completer.insert("he")
-p "suggest method: #{completer.find_all_words}"
-p completer.find_all_words[1]
-p completer.suggest("hel")
+# completer = CompleteMe.new("")
+# completer.insert("hell")
+# completer.insert("heat")
+# completer.insert("he")
+# p "suggest method: #{completer.find_all_words}"
+# p completer.find_all_words[1]
+# p completer.suggest("hel")
