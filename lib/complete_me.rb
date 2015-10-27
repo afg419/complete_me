@@ -21,23 +21,28 @@ class CompleteMe
     if root == string
       self.word = true
     else
-
       if !root
         self.root = string[0..depth-1]
       end
       links[string[depth]] ||= CompleteMe.new
       links[string[depth]].insert(string,depth + 1)
-
     end
 
   end
 
   def zoom_to(string)
+    #if string isn't in the library, raise error
+
     current = self
     chars = string.chars
 
     chars.each do |char|
-      current = current.links[char]
+      if current.links[char]
+        current = current.links[char]
+      else
+        puts "Input fragment begins no words in library!"
+        return nil
+      end
     end
 
     current
@@ -65,25 +70,34 @@ class CompleteMe
   end
 
   def suggest(fragment)
-    current = zoom_to(fragment)
-    possible_words = current.find_all_words
-    sort_by_weights(fragment,possible_words)
+    if zoom_to(fragment)
+      current = zoom_to(fragment)
+      possible_words = current.find_all_words
+      sort_by_weights(fragment,possible_words)
+    else
+      puts "Input fragment begins no words in library!"
+    end
   end
 
   def select(fragment,word)
-    self.associator[[fragment,word]] ||= 0
-    self.associator[[fragment,word]] -= 1
+    # if fragment not in word, raise error
+
+    if word[0..fragment.length-1] == fragment
+      self.associator[[fragment,word]] ||= 0
+      self.associator[[fragment,word]] -= 1
+    else
+      puts "Input fragment doesn't begin input word!"
+    end
   end
 
   def sort_by_weights(fragment,word_array)
-    weighted = word_array.map do |word|
-      [associator[[fragment,word]].to_i,word]
+    weighted = word_array.sort_by{|word| [associator[[fragment,word]].to_i,word] }
+  end
+
+  def populate(dictionary_file_handle)
+    dictionary_file_handle.split("\n").each do |word|
+      insert(word)
     end
-    weighted = weighted.sort
-    words = weighted.map do |value,word|
-      word
-    end
-    words
   end
 
 

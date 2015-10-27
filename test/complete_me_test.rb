@@ -103,13 +103,17 @@ class CompleteMeTest < Minitest::Test
     assert_equal "hello", complete.zoom_to("hello").root
   end
 
+  def test_it_raises_an_error_if_you_try_to_zoom_to_word_not_in_dictionary
+    refute (complete.zoom_to("hello"))
+  end
+
   def test_it_recognizes_longer_words_as_words
     complete.insert("hello")
 
     assert complete.zoom_to("hello").word
   end
 
-  def test_it_populates_all_word_fragments_with_longer_words
+  def test_it_populates_all_word_fragments_when_longer_words_inserted
     complete.insert("hello")
 
     assert_equal "hell", complete.zoom_to("hell").root
@@ -226,6 +230,16 @@ class CompleteMeTest < Minitest::Test
     computed = complete.suggest("leave").sort
 
     assert_equal expected, computed
+  end
+
+  def test_it_raises_an_error_if_you_suggest_word_fragment_not_in_library
+    words = %w{leaven leave leaves hallowed hallow hall allow}
+    words.each do |word|
+      complete.insert(word)
+    end
+
+    refute complete.suggest("ham")
+
   end
 
   def test_it_can_select_to_set_fragment_to_word_association
