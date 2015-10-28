@@ -117,6 +117,11 @@ class CompleteMeTest < Minitest::Test
     assert complete.zoom_to("hello").word
   end
 
+  def test_it_does_not_add_more_nodes_than_expected_when_large_word_added
+    complete.insert("amazing")
+    assert_equal({},complete.zoom_to("amazing").links)
+  end
+
   def test_it_populates_all_word_fragments_when_longer_words_inserted
     complete.insert("hello")
 
@@ -229,6 +234,10 @@ class CompleteMeTest < Minitest::Test
 
   end
 
+  def test_it_does_not_include_empty_space_as_word
+    assert_equal [], complete.find_all_words
+  end
+
   def test_it_can_count_words
     words = %w{leaven leave leaves hallowed hallow hall allow}
     words.each do |word|
@@ -277,10 +286,9 @@ class CompleteMeTest < Minitest::Test
     end
 
     refute complete.suggest("ham")
-
   end
 
-  def test_it_can_select_to_set_fragment_to_word_association
+  def test_it_can_select_to_decrement_fragment_to_word_association
     complete.select("hel","hello")
 
     assert_equal -1, complete.associator[["hel","hello"]]
