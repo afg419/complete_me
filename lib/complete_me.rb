@@ -1,6 +1,9 @@
+require 'pry'
+require_relative 'rev_complete_me'
+
 class CompleteMe
 
-  attr_accessor :root, :links, :word, :associator
+  attr_accessor :root, :links, :word, :associator, :dictionary
 
   def initialize(data = "")
     @root = data
@@ -11,7 +14,6 @@ class CompleteMe
   def insert(string, depth = 0)
     #we can remove the first if - then, leave self.root = string[0..depth-1]
     #concerned about speed, though (it basically means rewriting)
-
     if !root
       self.root = string[0..depth-1]
     end
@@ -82,8 +84,42 @@ class CompleteMe
     end
   end
 
+  def included_by(fragment, words = [])
+    if word && root.include?(fragment)
+      words << root
+    end
+
+    links.keys.each do |char_key|
+      links[char_key].included_by(fragment, words)
+    end
+    sort_by_weights(fragment,words)
+  end
+
+  def included_by2(fragment, words = [])
+    words += suggest(fragment)
+    15.times do
+      shorter = delete_each_node_first_char
+      shorter.insert(fragment)
+      words += shorter.suggest(fragment)
+    end
+  end
+
+  def delete_each_node_first_char
+    self.root = self.root[1..-1] if !root.nil?
+
+    links.keys.each do |char_key|
+      links[char_key].delete_each_node_first_char
+    end
+    self
+  end
 
 end
+
+complete = CompleteMe.new
+complete.populate("hire\nhello\nhistory\ngoodbye\nhe\nshe\nit\ni\na\nbanana")
+compleminus = complete.delete_each_node_first_char
+p compleminus.suggest("ir")
+
 
 # completer = CompleteMe.new("")
 # completer.insert("hell")
