@@ -1,4 +1,3 @@
-require 'pry'
 
 
 
@@ -6,7 +5,7 @@ class CompleteMe
 
   attr_accessor :root, :links, :word, :associator
 
-  def initialize(data = nil)
+  def initialize(data = "")
     @root = data
     @links = {}
     @associator ={}
@@ -14,7 +13,7 @@ class CompleteMe
 
   def insert(string, depth = 0)
 
-    if !root && depth == string.length
+    if depth == string.length
       self.root = string
     end
 
@@ -24,7 +23,7 @@ class CompleteMe
       if !root
         self.root = string[0..depth-1]
       end
-      links[string[depth]] ||= CompleteMe.new
+      links[string[depth]] ||= CompleteMe.new(nil)
       links[string[depth]].insert(string,depth + 1)
     end
 
@@ -44,7 +43,6 @@ class CompleteMe
         return nil
       end
     end
-
     current
   end
 
@@ -56,13 +54,11 @@ class CompleteMe
       if word
         words << root
       end
-
       links.keys.each do |char_key|
         links[char_key].find_all_words(words)
       end
-
     end
-    words
+    words - [""]
   end
 
   def count
@@ -74,14 +70,11 @@ class CompleteMe
       current = zoom_to(fragment)
       possible_words = current.find_all_words
       sort_by_weights(fragment,possible_words)
-    else
-      puts "Input fragment begins no words in library!"
     end
   end
 
   def select(fragment,word)
     # if fragment not in word, raise error
-
     if word[0..fragment.length-1] == fragment
       self.associator[[fragment,word]] ||= 0
       self.associator[[fragment,word]] -= 1

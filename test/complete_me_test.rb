@@ -1,26 +1,30 @@
 require_relative '../lib/complete_me'
 require 'minitest'
-require 'pry'
 
 class CompleteMeTest < Minitest::Test
 
   attr_reader :complete
 
   def setup
-    @complete = CompleteMe.new("")
+    @complete = CompleteMe.new
   end
 
   def test_it_exists
     assert CompleteMe.new
   end
 
-  def test_it_initializes_without_data
-    completed = CompleteMe.new
-    refute completed.root
+  def test_it_initializes_with_empty_string_data
+    assert_equal "", complete.root
   end
 
   def test_it_can_initialize_with_data
-    assert_equal "" , complete.root
+    completed = CompleteMe.new("hello")
+    assert_equal "hello" , completed.root
+  end
+
+  def test_it_can_initialize_with_nil
+    completed = CompleteMe.new(nil)
+    refute completed.root
   end
 
   def test_it_begins_with_alphabet_links
@@ -157,10 +161,22 @@ class CompleteMeTest < Minitest::Test
     assert_equal "aleph", complete.zoom_to("aleph").root
     assert_equal "leaf", complete.zoom_to("leaf").root
     assert_equal "leaven" , complete.zoom_to("leaven").root
+
+
+  end
+
+  def test_it_adds_all_fragments_when_it_adds_bunches_of_words
+    words = %w{hello lobo aleph leaf leaven leave}
+    words.each do |word|
+      complete.insert(word)
+    end
+
     assert_equal "ale", complete.zoom_to("ale").root
     assert_equal "le", complete.zoom_to("le").root
     assert_equal "l", complete.zoom_to("l").root
-
+    assert_equal "lob", complete.zoom_to("lob").root
+    assert_equal "h", complete.zoom_to("h").root
+    assert_equal "leav", complete.zoom_to("leav").root
   end
 
   def test_it_recognizes_words_amongst_bunches_of_words
@@ -175,10 +191,22 @@ class CompleteMeTest < Minitest::Test
     assert complete.zoom_to("aleph").word
     assert complete.zoom_to("leaf").word
     assert complete.zoom_to("leaven").word
+
+
+  end
+
+  def test_it_recognizes_non_words_amongst_bunches_of_words
+    words = %w{hello lobo aleph leaf leaven leave}
+    words.each do |word|
+      complete.insert(word)
+    end
+
     refute complete.zoom_to("ale").word
     refute complete.zoom_to("le").word
     refute complete.zoom_to("l").word
-
+    refute complete.zoom_to("lob").word
+    refute complete.zoom_to("h").word
+    refute complete.zoom_to("leav").word
   end
 
   def test_it_can_find_all_words_no_fragment_words
@@ -208,6 +236,16 @@ class CompleteMeTest < Minitest::Test
     end
 
     assert_equal 7, complete.count
+  end
+
+  def test_it_counts_repeated_words_once
+    words = %w{ hat hat hat }
+    words.each do |word|
+      complete.insert(word)
+    end
+
+    assert_equal 1, complete.count
+
   end
 
   def test_it_can_suggest_words_from_non_word_fragment
