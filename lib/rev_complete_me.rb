@@ -8,7 +8,6 @@ class RevCompleteMe
     @root = data
     @links = {}
     @associator ={}
-    @includes_into = []
   end
 
   def insert(string, depth = 0)
