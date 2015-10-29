@@ -66,18 +66,3 @@ class RevCompleteMe
   end
 
 end
-
-
-complete = RevCompleteMe.new
-complete.insert("olleh")
-complete.suggest("eh")
-# complete = RevCompleteMe.new
-# complete.populate("hire\nhello\nhistory\ngoodbye\nhe\nshe\nit\ni\na\nbanana")
-
-# completer = RevCompleteMe.new("")
-# completer.insert("hell")
-# completer.insert("heat")
-# completer.insert("he")
-# p "suggest method: #{completer.find_all_fragments}"
-# p completer.find_all_words[1]
-# p completer.suggest("hel")

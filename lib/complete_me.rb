@@ -23,8 +23,8 @@ class CompleteMe
     for_complete.suggest(fragment)
   end
 
-  def select(fragment,word,mode)
-    for_complete.select(fragment,word)
+  def select(fragment,word,mode = :start_word)
+    for_complete.select(fragment,word, mode)
   end
 
   def populate(file)
@@ -41,10 +41,13 @@ class CompleteMe
     end
   end
 
+  def load_rev_complete_with_for_fragments
+    populate_rev_complete_by_array(for_complete_fragments)
+  end
+
   def includes(fragment)
     results = []
 
-    populate_rev_complete_by_array(for_complete_fragments)
     back_fragments_ending_with_fragment = rev_complete.suggest(fragment) #returns all fragments of forward tree ending with given fragment
     back_fragments_ending_with_fragment.each do |back_fragment|
       results += for_complete.suggest(back_fragment).to_a #finds all words of foward tree beginning with a fragment ending in given fragment
@@ -53,14 +56,3 @@ class CompleteMe
   end
 
 end
-
-
-
-
-# completer = ForCompleteMe.new("")
-# completer.insert("hell")
-# completer.insert("heat")
-# completer.insert("he")
-# p "suggest method: #{completer.find_all_words}"
-# p completer.find_all_words[1]
-# p completer.suggest("hel")

@@ -35,6 +35,7 @@ class CompleteMeTest < Minitest::Test
   def test_can_find_single_word_containing_fragment
     complete = CompleteMe.new
     complete.insert("hello")
+    complete.load_rev_complete_with_for_fragments
 
     assert_equal ["hello"], complete.includes("el")
   end
@@ -42,7 +43,7 @@ class CompleteMeTest < Minitest::Test
   def test_returns_empty_when_no_words_contain_fragment
     complete = CompleteMe.new
     complete.insert("hello")
-
+    complete.load_rev_complete_with_for_fragments
     assert_equal [], complete.includes("le")
 
   end
@@ -50,6 +51,8 @@ class CompleteMeTest < Minitest::Test
   def test_can_find_single_word_when_fragment_is_word
     complete = CompleteMe.new
     complete.insert("hello")
+    complete.load_rev_complete_with_for_fragments
+
 
     assert_equal ["hello"], complete.includes("hello")
   end
@@ -58,6 +61,7 @@ class CompleteMeTest < Minitest::Test
     complete = CompleteMe.new
     complete.insert("hello")
     complete.insert("cess")
+    complete.load_rev_complete_with_for_fragments
 
     assert_equal ["hello"], complete.includes("ll")
   end
@@ -66,14 +70,15 @@ class CompleteMeTest < Minitest::Test
     complete = CompleteMe.new
     complete.insert("hello")
     complete.insert("jelly")
+    complete.load_rev_complete_with_for_fragments
 
     assert_equal ["hello","jelly"], complete.includes("ell")
-
   end
 
   def test_can_find_words_when_fragment_at_start
     complete = CompleteMe.new
     complete.insert("hello")
+    complete.load_rev_complete_with_for_fragments
 
     assert_equal ["hello"], complete.includes("he")
   end
@@ -81,6 +86,7 @@ class CompleteMeTest < Minitest::Test
   def test_can_find_words_when_fragment_at_end
     complete = CompleteMe.new
     complete.insert("hello")
+    complete.load_rev_complete_with_for_fragments
 
     assert_equal ["hello"], complete.includes("lo")
   end
@@ -88,21 +94,24 @@ class CompleteMeTest < Minitest::Test
   def test_can_find_all_the_damn_words
     complete = CompleteMe.new
     complete.populate("hello\ngoodbye\nhe\nshe\nit\ni\na\nbanana")
+    complete.load_rev_complete_with_for_fragments
 
     assert_equal ["hello", "goodbye", "he", "she"].sort, complete.includes("e").sort
-
   end
 
   def test_can_find_all_the_damn_word_medium_amount_of_words
     complete = CompleteMe.new
     complete.populate(medium_word_list)
+    complete.load_rev_complete_with_for_fragments
     expected = medium_word_list.split("\n").select{|x| x.include?("cy")}
+
     assert_equal expected.sort, complete.includes("cy").sort
   end
 
   def test_can_find_all_the_damn_word_medium_amount_of_words_twice
     complete = CompleteMe.new
     complete.populate(medium_word_list)
+    complete.load_rev_complete_with_for_fragments
 
     expected1 = medium_word_list.split("\n").select{|x| x.include?("cy")}
     assert_equal expected1.sort, complete.includes("cy").sort
@@ -118,6 +127,8 @@ class CompleteMeTest < Minitest::Test
   def test_can_find_all_words_including_fragment_ordered_by_selection
     complete = CompleteMe.new
     complete.populate(medium_word_list)
+    complete.load_rev_complete_with_for_fragments
+
     complete.select("cy","phagocytosis",:any_where_in_word)
     complete.select("cy","phagocytosis",:any_where_in_word)
     complete.select("cy","cyclopite",:any_where_in_word)

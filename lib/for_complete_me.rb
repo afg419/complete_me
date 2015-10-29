@@ -72,7 +72,7 @@ class ForCompleteMe
     self.associator[[fragment,word]] ||= 0
     self.associator[[fragment,word]] -= 1
 
-    if word[0..fragment.length-1] == fragment && mode != :start_word
+    if word[0..fragment.length-1] != fragment && mode == :start_word
       self.associator[[fragment,word]] = nil
       puts "Input fragment doesn't begin input word!"
     end
@@ -99,44 +99,4 @@ class ForCompleteMe
   end
 
 
-  # def included_by(fragment, words = [])
-  #   if word && root.include?(fragment)
-  #     words << root
-  #   end
-  #
-  #   links.keys.each do |char_key|
-  #     links[char_key].included_by(fragment, words)
-  #   end
-  #   sort_by_weights(fragment,words)
-  # end
-  #
-  # def included_by2(fragment, words = [])
-  #   words += suggest(fragment)
-  #   15.times do
-  #     shorter = delete_each_node_first_char
-  #     shorter.insert(fragment)
-  #     words += shorter.suggest(fragment)
-  #   end
-  # end
-  #
-  # def delete_each_node_first_char
-  #   self.root = self.root[1..-1] if !root.nil?
-  #
-  #   links.keys.each do |char_key|
-  #     links[char_key].delete_each_node_first_char
-  #   end
-  #   self
-  # end
-
 end
-
-
-
-
-# completer = ForCompleteMe.new("")
-# completer.insert("hell")
-# completer.insert("heat")
-# completer.insert("he")
-# p "suggest method: #{completer.find_all_words}"
-# p completer.find_all_words[1]
-# p completer.suggest("hel")
