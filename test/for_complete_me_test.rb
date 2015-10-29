@@ -357,33 +357,5 @@ class ForCompleteMeTest < Minitest::Test
     assert_equal "she", complete.zoom_to("she").root
   end
 
-  # def test_it_returns_word_containing_fragment_one_in_other
-  #   complete.populate("i\nhire")
-  #   assert_equal %w{ i hire }.sort, complete.included_by("i").sort
-  # end
-  #
-  # def test_it_returns_words_containing_fragment_in_single_prong_of_inclusions
-  #   complete.populate("i\nhire\nhigh")
-  #   assert_equal %w{ i hire high }.sort, complete.included_by("i").sort
-  # end
-  #
-  # def test_it_returns_words_conatining_fragment_in_chain_of_three
-  #   complete.populate("backward\nback\na")
-  #   assert_equal %w{ backward back a}.sort, complete.included_by("a").sort
-  #   assert_equal %w{ backward back}.sort, complete.included_by("back").sort
-  #   assert_equal %w{ backward }.sort, complete.included_by("backward").sort
-  # end
-  #
-  # def test_it_returns_words_containing_fragment
-  #   complete.populate("hire\nhello\nhistory\ngoodbye\nhe\nshe\nit\ni\na\nbanana")
-  #   assert_equal %w{ it i hire history }.sort, complete.included_by("i")
-  # end
-  #
-  # def test_it_returns_words_containing_fragment_ordered_by_weight
-  #   complete.populate("hire\nhello\nhistory\ngoodbye\nhe\nshe\nit\ni\na\nbanana")
-  #   complete.select("i","hire")
-  #   complete.select("i","history")
-  #   assert_equal %w{ hire history i it } ,  complete.included_by("i")
-  # end
 
 end

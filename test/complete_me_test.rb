@@ -3,9 +3,12 @@ require 'minitest'
 
 class CompleteMeTest < Minitest::Test
 
+  def medium_word_list
+    File.read("./test/medium.txt")
+  end
+
   def test_exists
     assert CompleteMe
-
   end
 
   def test_initializes_with_for_and_rev_completers
@@ -139,8 +142,6 @@ class CompleteMeTest < Minitest::Test
     assert_equal expected, complete.includes("cy")
   end
 
-  def medium_word_list
-    File.read("./test/medium.txt")
-  end
+
 
 end
