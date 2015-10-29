@@ -1,127 +1,64 @@
 require 'pry'
 require_relative 'rev_complete_me'
+require_relative 'for_complete_me'
 
 class CompleteMe
 
-  attr_accessor :root, :links, :word, :associator, :dictionary
+  attr_accessor :for_complete, :rev_complete
 
-  def initialize(data = "")
-    @root = data
-    @links = {}
-    @associator ={}
+  def initialize
+    @for_complete = ForCompleteMe.new
+    @rev_complete = RevCompleteMe.new
   end
 
-  def insert(string, depth = 0)
-    #we can remove the first if - then, leave self.root = string[0..depth-1]
-    #concerned about speed, though (it basically means rewriting)
-    if !root
-      self.root = string[0..depth-1]
-    end
-
-    if depth == string.length
-      self.root, self.word = string, true
-    else
-      links[string[depth]] ||= CompleteMe.new(nil)
-      links[string[depth]].insert(string,depth + 1)
-    end
-  end
-
-  def zoom_to(string)
-    current = self
-    chars = string.chars
-
-    chars.each do |char|
-      if current.links[char]
-        current = current.links[char]
-      else
-        puts "Input fragment begins no words in library!"
-        return nil
-      end
-    end
-    current
-  end
-
-  def find_all_words(words = [])
-    if word
-      words << root
-    end
-
-    links.keys.each do |char_key|
-      links[char_key].find_all_words(words)
-    end
-
-    words
+  def insert(string)
+    for_complete.insert(string)
   end
 
   def count
-    find_all_words.length
+    for_complete.count
   end
 
   def suggest(fragment)
-    if zoom_to(fragment)
-      current = zoom_to(fragment)
-      possible_words = current.find_all_words
-      sort_by_weights(fragment,possible_words)
-    end
+    for_complete.suggest(fragment)
   end
 
   def select(fragment,word)
-    if word[0..fragment.length-1] == fragment
-      self.associator[[fragment,word]] ||= 0
-      self.associator[[fragment,word]] -= 1
-    else
-      puts "Input fragment doesn't begin input word!"
+    for_complete.select(fragment,word)
+  end
+
+  def populate(file)
+    for_complete.populate(file)
+  end
+
+  def for_complete_fragments #returns all fragments of the for_complete tree
+    for_fragments = for_complete.find_all_fragments
+  end
+
+  def populate_rev_complete_by_array(array)
+    array.each do |element|
+      rev_complete.insert(element)
     end
   end
 
-  def sort_by_weights(fragment,word_array)
-    weighted = word_array.sort_by{|word| [associator[[fragment,word]].to_i, word] }
-  end
+  def includes(fragment)
+    results = []
 
-  def populate(dictionary_file_handle)
-    dictionary_file_handle.split("\n").each do |word|
-      insert(word)
-    end
-  end
-
-  def included_by(fragment, words = [])
-    if word && root.include?(fragment)
-      words << root
+    populate_rev_complete_by_array(for_complete_fragments)
+    back_fragments_ending_with_fragment  = rev_complete.suggest(fragment) #returns all fragments of forward tree ending with given fragment
+    back_fragments_ending_with_fragment.each do |back_fragment|
+      results += for_complete.suggest(back_fragment).to_a #finds all words of foward tree beginning with a fragment ending in given fragment
     end
 
-    links.keys.each do |char_key|
-      links[char_key].included_by(fragment, words)
-    end
-    sort_by_weights(fragment,words)
-  end
-
-  def included_by2(fragment, words = [])
-    words += suggest(fragment)
-    15.times do
-      shorter = delete_each_node_first_char
-      shorter.insert(fragment)
-      words += shorter.suggest(fragment)
-    end
-  end
-
-  def delete_each_node_first_char
-    self.root = self.root[1..-1] if !root.nil?
-
-    links.keys.each do |char_key|
-      links[char_key].delete_each_node_first_char
-    end
-    self
+    for_complete.sort_by_weights(fragment,results)
   end
 
 end
 
-complete = CompleteMe.new
-complete.populate("hire\nhello\nhistory\ngoodbye\nhe\nshe\nit\ni\na\nbanana")
-compleminus = complete.delete_each_node_first_char
-p compleminus.suggest("ir")
 
 
-# completer = CompleteMe.new("")
+
+# completer = ForCompleteMe.new("")
 # completer.insert("hell")
 # completer.insert("heat")
 # completer.insert("he")

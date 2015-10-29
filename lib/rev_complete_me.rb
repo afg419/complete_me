@@ -66,6 +66,10 @@ class RevCompleteMe
 
 end
 
+
+complete = RevCompleteMe.new
+complete.insert("olleh")
+complete.suggest("eh")
 # complete = RevCompleteMe.new
 # complete.populate("hire\nhello\nhistory\ngoodbye\nhe\nshe\nit\ni\na\nbanana")
 
