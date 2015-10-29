@@ -279,13 +279,13 @@ class ForCompleteMeTest < Minitest::Test
     assert_equal expected, computed
   end
 
-  def test_it_raises_an_error_if_you_suggest_word_fragment_not_in_library
+  def test_it_raises_an_error_and_returns_empty_if_you_suggest_word_fragment_not_in_library
     words = %w{leaven leave leaves hallowed hallow hall allow}
     words.each do |word|
       complete.insert(word)
     end
 
-    refute complete.suggest("ham")
+    assert_equal [], complete.suggest("ham")
   end
 
   def test_it_can_select_to_decrement_fragment_to_word_association

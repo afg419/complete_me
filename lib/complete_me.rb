@@ -23,7 +23,7 @@ class CompleteMe
     for_complete.suggest(fragment)
   end
 
-  def select(fragment,word)
+  def select(fragment,word,mode)
     for_complete.select(fragment,word)
   end
 
@@ -45,11 +45,10 @@ class CompleteMe
     results = []
 
     populate_rev_complete_by_array(for_complete_fragments)
-    back_fragments_ending_with_fragment  = rev_complete.suggest(fragment) #returns all fragments of forward tree ending with given fragment
+    back_fragments_ending_with_fragment = rev_complete.suggest(fragment) #returns all fragments of forward tree ending with given fragment
     back_fragments_ending_with_fragment.each do |back_fragment|
       results += for_complete.suggest(back_fragment).to_a #finds all words of foward tree beginning with a fragment ending in given fragment
     end
-
     for_complete.sort_by_weights(fragment,results)
   end
 

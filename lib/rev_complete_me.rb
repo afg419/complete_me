@@ -54,6 +54,8 @@ class RevCompleteMe
     if zoom_to(fragment)
       current = zoom_to(fragment)
       possible_words = current.find_all_fragments
+    else
+      []
     end
   end
 

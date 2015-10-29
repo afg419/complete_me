@@ -62,14 +62,18 @@ class ForCompleteMe
       current = zoom_to(fragment)
       possible_words = current.find_all_words
       sort_by_weights(fragment,possible_words)
+    else
+      []
     end
   end
 
-  def select(fragment,word)
-    if word[0..fragment.length-1] == fragment
-      self.associator[[fragment,word]] ||= 0
-      self.associator[[fragment,word]] -= 1
-    else
+  def select(fragment,word, mode = :start_word)
+
+    self.associator[[fragment,word]] ||= 0
+    self.associator[[fragment,word]] -= 1
+
+    if word[0..fragment.length-1] == fragment && mode != :start_word
+      self.associator[[fragment,word]] = nil
       puts "Input fragment doesn't begin input word!"
     end
   end

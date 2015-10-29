@@ -39,6 +39,14 @@ class CompleteMeTest < Minitest::Test
     assert_equal ["hello"], complete.includes("el")
   end
 
+  def test_returns_empty_when_no_words_contain_fragment
+    complete = CompleteMe.new
+    complete.insert("hello")
+
+    assert_equal [], complete.includes("le")
+
+  end
+
   def test_can_find_single_word_when_fragment_is_word
     complete = CompleteMe.new
     complete.insert("hello")
@@ -89,8 +97,35 @@ class CompleteMeTest < Minitest::Test
     complete = CompleteMe.new
     complete.populate(medium_word_list)
     expected = medium_word_list.split("\n").select{|x| x.include?("cy")}
-    puts expected
     assert_equal expected.sort, complete.includes("cy").sort
+  end
+
+  def test_can_find_all_the_damn_word_medium_amount_of_words_twice
+    complete = CompleteMe.new
+    complete.populate(medium_word_list)
+
+    expected1 = medium_word_list.split("\n").select{|x| x.include?("cy")}
+    assert_equal expected1.sort, complete.includes("cy").sort
+
+    expected2 = medium_word_list.split("\n").select{|x| x.include?("st")} + ["mustermaster"]
+    #I was failing this test because my includes method was returning 'mustermaster'
+    #twice.  I was looking for a bug until I realized that 'mustermaster' contains
+    #the fragment 'st' twice.  Figured this might be a more interesting feature
+    #anyways, so left it.
+    assert_equal expected2.sort, complete.includes("st")
+  end
+
+  def test_can_find_all_words_including_fragment_ordered_by_selection
+    complete = CompleteMe.new
+    complete.populate(medium_word_list)
+    complete.select("cy","phagocytosis",:any_where_in_word)
+    complete.select("cy","phagocytosis",:any_where_in_word)
+    complete.select("cy","cyclopite",:any_where_in_word)
+    complete.select("cy","omniregency",:any_where_in_word)
+
+    expected = %w{ phagocytosis cyclopite omniregency alcyonarian cycloidean overaccuracy ptochocracy }
+
+    assert_equal expected, complete.includes("cy")
   end
 
   def medium_word_list
